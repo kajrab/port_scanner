@@ -5,6 +5,7 @@
 #include <mutex>
 #include <vector>
 #include <algorithm>
+#include <fstream>
 
 std::mutex mtx;
 std::vector<std::pair<int, bool>> results; // port, open/closed
@@ -24,6 +25,19 @@ void scan(int start_port, int end_port, sockaddr_in service){
 
         closesocket(sock);
     }
+}
+
+void save_ports(std::vector<std::pair<int, bool>>& results){
+
+    std::ofstream file;
+
+    file.open("ports.txt");
+
+    for(auto& [port, open] : results){
+        file << "Port " << port << (open ? " is open!" : " is closed!") << '\n';
+    }
+
+    file.close();
 }
 
 int main(){
@@ -60,12 +74,10 @@ int main(){
 
     std::sort(results.begin(), results.end());
 
-    for(auto& [port, open] : results){
-        std::cout << "Port " << port << (open ? " is open!" : " is closed!") << '\n';
-    }
-
+    save_ports(results);
 
     std::cout << "Port scanning is done!\n";
+    std::cout << "You can find the results in ports.txt\n";
     WSACleanup();
     return 0;
 }
