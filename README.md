@@ -20,5 +20,4 @@ Then enter the target IP and port range when prompted.
 
 ## Planned features
 
-- Save results to file
 - OS detection
