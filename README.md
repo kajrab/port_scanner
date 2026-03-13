@@ -15,3 +15,4 @@ Then enter the target IP and port range when prompted.
 ## Features
 - Multithreaded scanning (4 threads)
 - OS detection via TTL fingerprinting
+- Banner grabbing
