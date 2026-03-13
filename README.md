@@ -16,3 +16,7 @@ Then enter the target IP and port range when prompted.
 - Multithreaded scanning (4 threads)
 - OS detection via TTL fingerprinting
 - Banner grabbing
+
+## Plan
+- Match service versions against a known CVE list
+- Generate a vulnerability report
