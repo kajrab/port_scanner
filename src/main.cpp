@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include "../libs/os_detection.h"
 
 std::mutex mtx;
 std::vector<std::pair<int, bool>> results; // port, open/closed
@@ -27,15 +28,17 @@ void scan(int start_port, int end_port, sockaddr_in service){
     }
 }
 
-void save_ports(std::vector<std::pair<int, bool>>& results){
+void save_ports(std::vector<std::pair<int, bool>>& results , std::string ip){
 
     std::ofstream file;
 
-    file.open("ports.txt");
+    file.open("../outputs/ports.txt");
 
     for(auto& [port, open] : results){
         file << "Port " << port << (open ? " is open!" : " is closed!") << '\n';
     }
+
+    file << "Detected OS: " << detect_os(ip);
 
     file.close();
 }
@@ -74,10 +77,11 @@ int main(){
 
     std::sort(results.begin(), results.end());
 
-    save_ports(results);
+    save_ports(results , ip);
 
     std::cout << "Port scanning is done!\n";
     std::cout << "You can find the results in ports.txt\n";
+
     WSACleanup();
     return 0;
 }
