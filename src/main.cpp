@@ -10,6 +10,7 @@
 
 std::mutex mtx;
 std::vector<std::pair<int, bool>> results; // port, open/closed
+std::vector<std::string> banners;
 
 void scan(int start_port, int end_port, sockaddr_in service){
     for(int port = start_port; port <= end_port; port++){
@@ -21,8 +22,12 @@ void scan(int start_port, int end_port, sockaddr_in service){
         service.sin_port = htons(port);
         bool open = connect(sock, reinterpret_cast<SOCKADDR*>(&service), sizeof(service)) != SOCKET_ERROR;
 
+        char banner[256] = {0};
+        recv(sock, banner, sizeof(banner) - 1, 0);
+
         std::lock_guard<std::mutex> lock(mtx);
         results.push_back({port, open});
+        banners.push_back(banner);
 
         closesocket(sock);
     }
@@ -36,6 +41,12 @@ void save_ports(std::vector<std::pair<int, bool>>& results , std::string ip){
 
     for(auto& [port, open] : results){
         file << "Port " << port << (open ? " is open!" : " is closed!") << '\n';
+    }
+
+    for(auto& current_banner : banners){
+        if(current_banner != ""){
+            file << "\nCatched Banner: " << current_banner;
+        }
     }
 
     file << "Detected OS: " << detect_os(ip);
